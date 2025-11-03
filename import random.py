@@ -30,7 +30,7 @@ def Start():
 #     print(''.join(j))
 
 # RandomLetter()
-def RandomString(length, repetitions=100000, unique=True, uppercase=True):
+def RandomString(length, repetitions=1000, unique=True, uppercase=True):
     # """Generate `repetitions` random strings of `length` using uppercase letters by default.
 
     # If `unique` is True, ensure no string is output more than once. This will raise
