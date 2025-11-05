@@ -1,50 +1,41 @@
-import sqlite3 as sql
-import sys
-import os
-import Generation
-def InitData():
-    app = QApplication(sys.argv) 
+import sqlite3
+from datetime import datetime
 
-    database = database()
-    database.Create_database()
-    exit()
-    
-    app.exec_()
+class Database:
+    def __init__(self, db_path="generated_strings.db"):
+        self.db_path = db_path
+        self.conn = sqlite3.connect(self.db_path)
+        self._create_table()
 
-
-class database:
-
-    def Create_database(self):
-
-        connexion = sql.connect("String-generation.db") #database created
-        cursor = connexion.cursor()
-        created= False
-        #check if database exists
-        try :
-            cursor.execute("INSERT INTO String-generation (value, length, charset, source) VALUES (\"aB3xYz\" , \"6\" , \"alphanumeric\" , \"web-ui\")")
-            cursor.execute("SELECT * FROM String-generation")
-            print(cursor.fetchall())
-            connexion.commit()
-            #connexion.close()
-            print("created")
-            created = True
-            
-        except:
-            created = False
-            print("table not created or found")
-            try:
-                cursor.execute("""
-                CREATE TABLE IF NOT EXISTS String-generation (
-                    StringID INTEGER PRIMARY KEY , StringGenerated TEXT  
+    def _create_table(self):
+        with self.conn:
+            self.conn.execute("""
+                CREATE TABLE IF NOT EXISTS generated_strings (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    value TEXT NOT NULL,
+                    length INTEGER NOT NULL,
+                    created_at TEXT DEFAULT (datetime('now'))
                 );
-                """)
-                
-                connexion.commit()
-                #connexion.close()
+            """)
 
-            except:
-                print("error")
+    def insert_string(self, value, length):
+        with self.conn:
+            self.conn.execute(
+                "INSERT INTO generated_strings (value, length) VALUES (?, ?);",
+                (value, length)
+            )
+
+    def get_recent_strings(self, ):
+        cur = self.conn.cursor()
+        cur.execute(
+            "SELECT value, length, created_at FROM generated_strings" \
+            ";",
         
-    def execute_sql(self, sql):
-        # Placeholder for SQL execution logic
-        print(f"Executing SQL: {sql}")
+        )
+        return cur.fetchall()
+
+    def close(self):
+        if self.conn:
+            self.conn.close()
+
+       

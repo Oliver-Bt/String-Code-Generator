@@ -4,10 +4,19 @@ import itertools
 from math import factorial
 import time
 import threading
+from database import Database
 
-class Code_generation ():
+
+class Code_generation:
+    repetitions = 165,675,600
+    length=6 
+    unique=True 
+    uppercase=True
+
+    def __init__(self):
+        self.db = Database()
      
-     def RandomString(length, repetitions=1000, unique=True, uppercase=True):
+    def RandomString(self):
         # """Generate `repetitions` random strings of `length` using uppercase letters by default.
 
         # If `unique` is True, ensure no string is output more than once. This will raise
@@ -15,6 +24,11 @@ class Code_generation ():
         # combinations for the chosen alphabet and length.
         # """
         # Choose alphabet based on uppercase flag
+        repetitions = self.repetitions
+        length = self.length
+        unique = self.unique   
+        uppercase = self.uppercase
+
         alphabet = string.ascii_uppercase if uppercase else string.ascii_lowercase
 
         # Total number of possible strings of given length (with repetition allowed)
@@ -53,11 +67,31 @@ class Code_generation ():
             paired = '-'.join(result_str[j:j+2] for j in range(0, len(result_str), 2))
             print("Random string of length", length, "is:", result_str)
             print("Paired string:", paired)
+            
+            # Only store the paired version in the database
+            self.db.insert_string(paired, length)
 
         # Report elapsed time
         end = time.time()
         time_elapsed = (end - _start)
         print("Time taken for", repetitions, "repetitions:", time_elapsed, "seconds")
+        return seen
+    #from Generation import Code_generation
+
+    #gen = Code_generation()
+    #gen.RandomString(length=6, repetitions=1000, unique=True, uppercase=True)
+
+    # # To see what's in the database:
+    # for row in gen.db.get_recent_strings(10):
+    #     print(row)
+
+
+
+        
+  
+
+
+
 
     # def Start():
     #     value=0
@@ -74,60 +108,7 @@ class Code_generation ():
     #     print(random.randint(1, 10))
 
 
-# def RandomLetter():
-#     letters = 'abcdefghijklmnopqrstuvwxyz'
-#     j=0
-#     for i in range(6):
-#         j = random.choice(letters)
-#         j=j+1
-#         i=i+1    
-#     print(''.join(j))
 
-# RandomLetter()
-   
-
-
-#RandomString(6)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # def count_permutations(n, k):
-    #     if k > n:
-    #         return 0
-    #     return factorial(n) // factorial(n - k)
-
-    # def generate_all_unique_strings(length, output_path=None, uppercase=True, max_allowed=1_000_000_000):
-    #     """
-    #     Generate every possible string of given `length` from the alphabet without repeating characters.
-    #     - If output_path is provided, writes one string per line to that file.
-    #     - Otherwise returns a generator (do not iterate it if the count is huge).
-    #     - Safety: if total permutations > max_allowed, raises ValueError to avoid excessive work.
-    #     """
-    #     alphabet = string.ascii_uppercase if uppercase else string.ascii_lowercase
-    #     n = len(alphabet)
-    #     total = count_permutations(n, length)
-    #     if total == 0:
-    #         raise ValueError("length is greater than alphabet size")
-    #     if total > max_allowed:
-    #         raise ValueError(f"Too many permutations ({total}). Increase max_allowed if you really want to proceed.")
-
-    #     perms = (''.join(p) for p in itertools.permutations(alphabet, length))
-    #     if output_path:
-    #         with open(output_path, 'w', encoding='utf-8') as f:
-    #             for s in perms:
-    #                       f.write(s + '\n')
-    #         return total
-    #     return perms 
-
-    #count_permutations(26, 6)
+if __name__ == "__main__":
+    gen = Code_generation()
+    gen.RandomString()
