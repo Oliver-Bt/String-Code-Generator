@@ -90,7 +90,9 @@ class Code_generation:
         
         return seen
 
-
+if __name__ == "__main__":
+    gen = Code_generation()
+    gen.RandomString()
 
         
   
@@ -114,6 +116,4 @@ class Code_generation:
 
 
 
-if __name__ == "__main__":
-    gen = Code_generation()
-    gen.RandomString()
+
