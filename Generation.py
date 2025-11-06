@@ -1,14 +1,11 @@
 import random
 import string
-import itertools
-from math import factorial
 import time
-import threading
 from database import Database
 
 
 class Code_generation:
-    repetitions = 165,675,600
+    repetitions = 165675600
     length=6 
     unique=True 
     uppercase=True
@@ -28,6 +25,9 @@ class Code_generation:
         length = self.length
         unique = self.unique   
         uppercase = self.uppercase
+        InsertList=[]
+        listSize=20000
+
 
         alphabet = string.ascii_uppercase if uppercase else string.ascii_lowercase
 
@@ -44,7 +44,8 @@ class Code_generation:
         seen = set()
 
         # Start timing so caller can see how long generation took
-        _start = time.time()
+        start = time.time()
+        count=1
 
         # Continue generating until we have produced the requested number of strings
         # When `unique` is True we skip any repeat that was already generated.
@@ -65,25 +66,29 @@ class Code_generation:
 
             # Optionally present the string in paired groups for readability
             paired = '-'.join(result_str[j:j+2] for j in range(0, len(result_str), 2))
-            print("Random string of length", length, "is:", result_str)
-            print("Paired string:", paired)
+            #print("Random string of length", length, "is:", result_str)
+            #print("Paired string:", paired)
+            
             
             # Only store the paired version in the database
-            self.db.insert_string(paired, length)
+            InsertList.append((paired, length))
+            if len(InsertList)>=listSize:
+                self.db.InsertMany( InsertList)   
+                InsertList=[]
+                count+=20000
+            end=time.time()
+            elapsed= end - start
+            rate=count/elapsed
+            print("Insertion rate:", rate, "strings/second")
 
+        #self.db.insert_string(paired, length)
         # Report elapsed time
-        end = time.time()
-        time_elapsed = (end - _start)
-        print("Time taken for", repetitions, "repetitions:", time_elapsed, "seconds")
+        #end = time.time()
+        #time_elapsed = (end - _start)
+        
+        #print("Time taken for", repetitions, "repetitions:", time_elapsed, "seconds")
+        
         return seen
-    #from Generation import Code_generation
-
-    #gen = Code_generation()
-    #gen.RandomString(length=6, repetitions=1000, unique=True, uppercase=True)
-
-    # # To see what's in the database:
-    # for row in gen.db.get_recent_strings(10):
-    #     print(row)
 
 
 
