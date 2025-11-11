@@ -2,6 +2,9 @@ import random
 import string
 import time
 from database import Database
+import itertools
+
+
 
 
 class Code_generation:
@@ -79,7 +82,7 @@ class Code_generation:
 
 
 
-    def New_String_generation():
+    def New_String_AI_generation():
         alphabet = list(string.ascii_uppercase)  # Get list of uppercase letters A-Z
         combinations = []
         
@@ -103,7 +106,12 @@ class Code_generation:
         return combinations
 
 
-    New_String_generation()
+    New_String_AI_generation()
+
+    def New_String_generation():
+        alphabet = list(string.ascii_uppercase)
+        print(alphabet)
+        
 
 # if __name__ == "__main__":
 #     gen = Code_generation()
